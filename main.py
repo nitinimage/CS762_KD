@@ -1,4 +1,4 @@
-"""Main entrance for train/eval with/without KD on CIFAR-10"""
+"""Main entrance for train/eval with/without KD"""
 
 import argparse
 import logging
@@ -14,15 +14,9 @@ import torch.optim as optim
 from torch.optim.lr_scheduler import StepLR
 from torch.autograd import Variable
 from tqdm import tqdm
-
 import utils
-import model.net as net
 import dataloader as data_loader
-import model.resnet as resnet
-# import model.wrn as wrn
-# import model.densenet as densenet
-# import model.resnext as resnext
-# import model.preresnet as preresnet
+import resnet
 from evaluate import evaluate, evaluate_kd
 
 parser = argparse.ArgumentParser()
@@ -358,20 +352,12 @@ if __name__ == '__main__':
     """
     if "distill" in params.model_version:
 
-        # train a 5-layer CNN or a 18-layer ResNet with knowledge distillation
-        if params.model_version == "cnn_distill":
-            model = net.Net(params).cuda() if params.cuda else net.Net(params)
-            optimizer = optim.Adam(model.parameters(), lr=params.learning_rate)
-            # fetch loss function and metrics definition in model files
-            loss_fn_kd = net.loss_fn_kd
-            metrics = net.metrics
-        
-        elif params.model_version == 'resnet18_distill':
+        if params.model_version == 'resnet18_distill':
             model = resnet.ResNet18().cuda() if params.cuda else resnet.ResNet18()
             optimizer = optim.SGD(model.parameters(), lr=params.learning_rate,
                                   momentum=0.9, weight_decay=5e-4)
             # fetch loss function and metrics definition in model files
-            loss_fn_kd = net.loss_fn_kd
+            loss_fn_kd = resnet.loss_fn_kd
             metrics = resnet.metrics
 
         """ 
@@ -385,27 +371,6 @@ if __name__ == '__main__':
             teacher_checkpoint = 'experiments/base_resnet18/best.pth.tar'
             teacher_model = teacher_model.cuda() if params.cuda else teacher_model
 
-        # elif params.teacher == "wrn":
-        #     teacher_model = wrn.WideResNet(depth=28, num_classes=10, widen_factor=10,
-        #                                    dropRate=0.3)
-        #     teacher_checkpoint = 'experiments/base_wrn/best.pth.tar'
-        #     teacher_model = nn.DataParallel(teacher_model).cuda()
-
-        # elif params.teacher == "densenet":
-        #     teacher_model = densenet.DenseNet(depth=100, growthRate=12)
-        #     teacher_checkpoint = 'experiments/base_densenet/best.pth.tar'
-        #     teacher_model = nn.DataParallel(teacher_model).cuda()
-
-        # elif params.teacher == "resnext29":
-        #     teacher_model = resnext.CifarResNeXt(cardinality=8, depth=29, num_classes=10)
-        #     teacher_checkpoint = 'experiments/base_resnext29/best.pth.tar'
-        #     teacher_model = nn.DataParallel(teacher_model).cuda()
-
-        # elif params.teacher == "preresnet110":
-        #     teacher_model = preresnet.PreResNet(depth=110, num_classes=10)
-        #     teacher_checkpoint = 'experiments/base_preresnet110/best.pth.tar'
-        #     teacher_model = nn.DataParallel(teacher_model).cuda()
-
         utils.load_checkpoint(teacher_checkpoint, teacher_model)
 
         # Train the model with KD
@@ -417,29 +382,13 @@ if __name__ == '__main__':
 
     # non-KD mode: regular training of the baseline CNN or ResNet-18
     else:
-        # if params.model_version == "cnn":
-        #     model = net.Net(params).cuda() if params.cuda else net.Net(params)
-        #     optimizer = optim.Adam(model.parameters(), lr=params.learning_rate)
-        #     # fetch loss function and metrics
-        #     loss_fn = net.loss_fn
-        #     metrics = net.metrics
-
-        # elif params.model_version == "resnet18":
-        model = resnet.ResNet18().cuda() if params.cuda else resnet.ResNet18()
-        optimizer = optim.SGD(model.parameters(), lr=params.learning_rate,
-                              momentum=0.9, weight_decay=5e-4)
-        # fetch loss function and metrics
-        loss_fn = resnet.loss_fn
-        metrics = resnet.metrics
-
-        # elif params.model_version == "wrn":
-        #     model = wrn.wrn(depth=28, num_classes=10, widen_factor=10, dropRate=0.3)
-        #     model = model.cuda() if params.cuda else model
-        #     optimizer = optim.SGD(model.parameters(), lr=params.learning_rate,
-        #                           momentum=0.9, weight_decay=5e-4)
-        #     # fetch loss function and metrics
-        #     loss_fn = wrn.loss_fn
-        #     metrics = wrn.metrics
+        if params.model_version == "resnet18":
+            model = resnet.ResNet18().cuda() if params.cuda else resnet.ResNet18()
+            optimizer = optim.SGD(model.parameters(), lr=params.learning_rate,
+                                momentum=0.9, weight_decay=5e-4)
+            # fetch loss function and metrics
+            loss_fn = resnet.loss_fn
+            metrics = resnet.metrics
 
         # Train the model
         logging.info("Starting training for {} epoch(s)".format(params.num_epochs))
