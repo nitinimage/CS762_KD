@@ -51,7 +51,7 @@ def evaluate(model, loss_fn, dataloader, metrics, params):
         # compute all metrics on this batch
         summary_batch = {metric: metrics[metric](output_batch, labels_batch)
                          for metric in metrics}
-        summary_batch['loss'] = loss.data[0]
+        summary_batch['loss'] = loss.data
         summ.append(summary_batch)
 
     # compute mean of all metrics in summary
@@ -107,7 +107,7 @@ def evaluate_kd(model, dataloader, metrics, params):
         # compute all metrics on this batch
         summary_batch = {metric: metrics[metric](output_batch, labels_batch)
                          for metric in metrics}
-        # summary_batch['loss'] = loss.data[0]
+        # summary_batch['loss'] = loss.data
         summary_batch['loss'] = loss
         summ.append(summary_batch)
 

@@ -78,11 +78,11 @@ def train(model, optimizer, loss_fn, dataloader, metrics, params, scheduler):
                 # compute all metrics on this batch
                 summary_batch = {metric:metrics[metric](output_batch, labels_batch)
                                  for metric in metrics}
-                summary_batch['loss'] = loss.data[0]
+                summary_batch['loss'] = loss.data
                 summ.append(summary_batch)
 
             # update the average loss
-            loss_avg.update(loss.data[0])
+            loss_avg.update(loss.data)
 
             t.set_postfix(loss='{:05.3f}'.format(loss_avg()))
             t.update()
@@ -214,11 +214,11 @@ def train_kd(model, teacher_model, optimizer, loss_fn_kd, dataloader, metrics, p
                 # compute all metrics on this batch
                 summary_batch = {metric:metrics[metric](output_batch, labels_batch)
                                  for metric in metrics}
-                summary_batch['loss'] = loss.data[0]
+                summary_batch['loss'] = loss.data
                 summ.append(summary_batch)
 
             # update the average loss
-            loss_avg.update(loss.data[0])
+            loss_avg.update(loss.data)
 
             t.set_postfix(loss='{:05.3f}'.format(loss_avg()))
             t.update()
@@ -344,7 +344,7 @@ if __name__ == '__main__':
                            show_sample=False)
 
 
-    logging.info("- done.")
+    logging.info("Dataloading done.")
 
     """Based on the model_version, determine model/optimizer and KD training mode
        WideResNet and DenseNet were trained on multi-GPU; need to specify a dummy
