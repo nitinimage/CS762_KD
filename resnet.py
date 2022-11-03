@@ -79,6 +79,7 @@ class ResNet(nn.Module):
         self.layer3 = self._make_layer(block, 256, num_blocks[2], stride=2)
         self.layer4 = self._make_layer(block, 512, num_blocks[3], stride=2)
         self.linear = nn.Linear(512*block.expansion, num_classes)
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
 
     def _make_layer(self, block, planes, num_blocks, stride):
         strides = [stride] + [1]*(num_blocks-1)
@@ -94,15 +95,17 @@ class ResNet(nn.Module):
         out = self.layer2(out)
         out = self.layer3(out)
         out = self.layer4(out)
-        out = F.avg_pool2d(out, 4)
-        out = out.view(out.size(0), -1)
+        out = self.avgpool(out)
+        out = torch.flatten(out, 1)
+        # out = F.avg_pool2d(out, 4)
+        # out = out.view(out.size(0), -1)
+
         out = self.linear(out)
         return out
 
 
 def ResNet18():
-    #return ResNet(BasicBlock, [2,2,2,2])
-    return torch.hub.load('pytorch/vision:v0.10.0', 'resnet18', pretrained=False)
+    return ResNet(BasicBlock, [2,2,2,2])
 
 def ResNet34():
     return ResNet(BasicBlock, [3,4,6,3])
