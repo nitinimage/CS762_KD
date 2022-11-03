@@ -2,14 +2,10 @@
 
 import argparse
 import logging
-import os
 
 import numpy as np
 import torch
 from torch.autograd import Variable
-import utils
-import model.net as net
-import model.resnet as resnet
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model_dir', default='experiments/base_model', help="Directory of params.json")
@@ -70,6 +66,7 @@ This function duplicates "evaluate()" but ignores "loss_fn" simply for speedup p
 Validation loss during KD mode would display '0' all the time.
 One can bring that info back by using the fetched teacher outputs during evaluation (refer to train.py)
 """
+
 def evaluate_kd(model, dataloader, metrics, params):
     """Evaluate the model on `num_steps` batches.
 

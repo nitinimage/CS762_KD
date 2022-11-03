@@ -101,7 +101,8 @@ class ResNet(nn.Module):
 
 
 def ResNet18():
-    return ResNet(BasicBlock, [2,2,2,2])
+    #return ResNet(BasicBlock, [2,2,2,2])
+    return torch.hub.load('pytorch/vision:v0.10.0', 'resnet18', pretrained=False)
 
 def ResNet34():
     return ResNet(BasicBlock, [3,4,6,3])
@@ -115,13 +116,6 @@ def ResNet101():
 def ResNet152():
     return ResNet(Bottleneck, [3,8,36,3])
 
-
-# def test():
-#     net = ResNet18()
-#     y = net(Variable(torch.randn(1,3,32,32)))
-#     print(y.size())
-
-# test()
 
 def loss_fn(outputs, labels):
     """
@@ -160,7 +154,8 @@ def accuracy(outputs, labels):
     return np.sum(outputs==labels)/float(labels.size)
 
 
-# maintain all metrics required in this dictionary- these are used in the training and evaluation loops
+# maintain all metrics required in this dictionary- 
+# these are used in the training and evaluation loops
 metrics = {
     'accuracy': accuracy,
     # could add more metrics such as accuracy for each token type
