@@ -57,7 +57,7 @@ def get_train_valid_loader(data_dir,
 
     # define transforms
     valid_transform = transforms.Compose([
-            transforms.CenterCrop((224,224), pad_if_needed=True, padding_mode='reflect'),
+            transforms.CenterCrop((224,224)),
             transforms.ToTensor(),
             normalize,
     ])
@@ -154,7 +154,7 @@ def get_test_loader(data_dir,
 
     # define transform
     transform = transforms.Compose([
-        transforms.CenterCrop((224,224), pad_if_needed=True, padding_mode='reflect'),
+        transforms.CenterCrop((224,224)),
         transforms.ToTensor(),
         normalize,
     ])
