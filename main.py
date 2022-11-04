@@ -214,7 +214,7 @@ def train_kd(model, teacher_model, optimizer, loss_fn_kd, dataloader, metrics, p
                 # compute all metrics on this batch
                 summary_batch = {metric:metrics[metric](output_batch, labels_batch)
                                  for metric in metrics}
-                summary_batch['loss'] = loss.data
+                summary_batch['loss'] = loss.data.cpu().numpy()
                 summ.append(summary_batch)
 
             # update the average loss
@@ -337,7 +337,7 @@ if __name__ == '__main__':
     train_dl, dev_dl = data_loader.get_train_valid_loader(
                            data_dir=params.data_dir,
                            batch_size=params.batch_size,
-                           augment=params.augmentation,
+                           augment=params.augment,
                            random_seed=42,
                            valid_size=params.valid_size,
                            shuffle=True,
