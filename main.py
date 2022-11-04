@@ -342,7 +342,7 @@ if __name__ == '__main__':
                            batch_size=params.batch_size,
                            augment=params.augmentation,
                            random_seed=42,
-                           valid_size=0.2,
+                           valid_size=params.valid_size,
                            shuffle=True,
                            show_sample=False,
                            num_workers=params.num_workers,
