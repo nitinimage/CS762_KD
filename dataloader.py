@@ -63,8 +63,8 @@ def get_train_valid_loader(data_dir,
     ])
     if augment:
         train_transform = transforms.Compose([
-            #transforms.Resize((224,224)),
-            transforms.RandomCrop((224,224), pad_if_needed=True, padding_mode='reflect'),
+            transforms.Resize((224,224)),
+            #transforms.RandomCrop((224,224), pad_if_needed=True, padding_mode='reflect'),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             normalize,
