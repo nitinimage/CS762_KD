@@ -111,16 +111,10 @@ def train_and_evaluate(model, train_dataloader, val_dataloader, optimizer,
 
     best_val_acc = 0.0
 
-    # learning rate schedulers for different models:
-    if params.model_version == "resnet18":
-        scheduler = StepLR(optimizer, step_size=150, gamma=0.1)
-    # for cnn models, num_epoch is always < 100, so it's intentionally not using scheduler here
-    elif params.model_version == "cnn":
-        scheduler = StepLR(optimizer, step_size=100, gamma=0.2)
+    # learning rate schedulers
+    scheduler = StepLR(optimizer, step_size=150, gamma=0.1)
 
     for epoch in range(params.num_epochs):
-     
-        #scheduler.step()
      
         # Run one epoch
         logging.info("Epoch {}/{}".format(epoch + 1, params.num_epochs))
@@ -129,6 +123,7 @@ def train_and_evaluate(model, train_dataloader, val_dataloader, optimizer,
         train(model, optimizer, loss_fn, train_dataloader, metrics, params, scheduler)
 
         # Evaluate for one epoch on validation set
+        logging.info("Evaluating on validation set")
         val_metrics = evaluate(model, loss_fn, val_dataloader, metrics, params)        
 
         val_acc = val_metrics['accuracy']
@@ -247,15 +242,8 @@ def train_and_evaluate_kd(model, teacher_model, train_dataloader, val_dataloader
 
     best_val_acc = 0.0
     
-    # Tensorboard logger setup
-    # board_logger = utils.Board_Logger(os.path.join(model_dir, 'board_logs'))
-
     # learning rate schedulers for different models:
-    if params.model_version == "resnet18_distill":
-        scheduler = StepLR(optimizer, step_size=150, gamma=0.1)
-    # for cnn models, num_epoch is always < 100, so it's intentionally not using scheduler here
-    elif params.model_version == "cnn_distill": 
-        scheduler = StepLR(optimizer, step_size=100, gamma=0.2) 
+    scheduler = StepLR(optimizer, step_size=150, gamma=0.1) 
 
     for epoch in range(params.num_epochs):
 
@@ -269,6 +257,7 @@ def train_and_evaluate_kd(model, teacher_model, train_dataloader, val_dataloader
                  metrics, params)
 
         # Evaluate for one epoch on validation set
+        logging.info("Evaluating on validation set")
         val_metrics = evaluate_kd(model, val_dataloader, metrics, params)
 
         val_acc = val_metrics['accuracy']
@@ -296,6 +285,8 @@ def train_and_evaluate_kd(model, teacher_model, train_dataloader, val_dataloader
 
 
         # #============ TensorBoard logging: uncomment below to turn in on ============#
+        # Tensorboard logger setup
+        # board_logger = utils.Board_Logger(os.path.join(model_dir, 'board_logs'))
         # # (1) Log the scalar values
         # info = {
         #     'val accuracy': val_acc
