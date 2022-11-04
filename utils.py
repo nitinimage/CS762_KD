@@ -98,10 +98,10 @@ def set_logger(log_path):
         file_handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s: %(message)s'))
         logger.addHandler(file_handler)
 
-        # Logging to console
-        stream_handler = logging.StreamHandler()
-        stream_handler.setFormatter(logging.Formatter('%(message)s'))
-        logger.addHandler(stream_handler)
+        # # Logging to console
+        # stream_handler = logging.StreamHandler()
+        # stream_handler.setFormatter(logging.Formatter('%(message)s'))
+        # logger.addHandler(stream_handler)
 
 
 def save_dict_to_json(d, json_path):

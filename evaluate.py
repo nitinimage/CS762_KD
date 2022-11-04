@@ -2,7 +2,7 @@
 
 import argparse
 import logging
-
+from tqdm import tqdm
 import numpy as np
 import torch
 from torch.autograd import Variable
@@ -32,7 +32,7 @@ def evaluate(model, loss_fn, dataloader, metrics, params):
     summ = []
 
     # compute metrics over the dataset
-    for data_batch, labels_batch in dataloader:
+    for data_batch, labels_batch in tqdm(dataloader):
 
         # move to GPU if available
         if params.cuda:
@@ -86,7 +86,7 @@ def evaluate_kd(model, dataloader, metrics, params):
     summ = []
 
     # compute metrics over the dataset
-    for i, (data_batch, labels_batch) in enumerate(dataloader):
+    for i, (data_batch, labels_batch) in tqdm(enumerate(dataloader)):
 
         # move to GPU if available
         if params.cuda:
