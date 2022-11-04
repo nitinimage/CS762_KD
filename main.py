@@ -87,8 +87,9 @@ def train(model, optimizer, loss_fn, dataloader, metrics, params, scheduler):
             t.set_postfix(loss='{:05.3f}'.format(loss_avg()))
             t.update()
     
-    for i in summ:
-        print(i)
+    print(len(summ))
+    print(summ[0].device)
+    print(summ[0])
         
     # compute mean of all metrics in summary
     metrics_mean = {metric:np.mean([x[metric] for x in summ]) for metric in summ[0]}
