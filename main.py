@@ -88,6 +88,8 @@ def train(model, optimizer, loss_fn, dataloader, metrics, params, scheduler):
             t.update()
 
     # compute mean of all metrics in summary
+
+    summ.cpu()
     metrics_mean = {metric:np.mean([x[metric] for x in summ]) for metric in summ[0]}
     metrics_string = " ; ".join("{}: {:05.3f}".format(k, v) for k, v in metrics_mean.items())
     logging.info("- Train metrics: " + metrics_string)
@@ -337,19 +339,17 @@ if __name__ == '__main__':
     train_dl, dev_dl = data_loader.get_train_valid_loader(
                            data_dir=params.data_dir,
                            batch_size=params.batch_size,
-                           augment=True,
+                           augment=params.augmentation,
                            random_seed=42,
                            valid_size=0.2,
                            shuffle=True,
-                           show_sample=False)
+                           show_sample=False,
+                           num_workers=params.num_workers,
+                           pin_memory=params.cuda)
 
 
     logging.info("Dataloading done.")
 
-    """Based on the model_version, determine model/optimizer and KD training mode
-       WideResNet and DenseNet were trained on multi-GPU; need to specify a dummy
-       nn.DataParallel module to correctly load the model parameters
-    """
     if "distill" in params.model_version:
 
         if params.model_version == 'resnet18_distill':
@@ -360,15 +360,16 @@ if __name__ == '__main__':
             loss_fn_kd = resnet.loss_fn_kd
             metrics = resnet.metrics
 
+
         """ 
             Specify the pre-trained teacher models for knowledge distillation
             Important note: wrn/densenet/resnext/preresnet were pre-trained models using multi-GPU,
             therefore need to call "nn.DaraParallel" to correctly load the model weights
             Trying to run on CPU will then trigger errors (too time-consuming anyway)!
         """
-        if params.teacher == "resnet18":
-            teacher_model = resnet.ResNet18()
-            teacher_checkpoint = 'experiments/base_resnet18/best.pth.tar'
+        if params.teacher == "resnet50":
+            teacher_model = resnet.ResNet50()
+            teacher_checkpoint = 'experiments/base_resnet50/best.pth.tar'
             teacher_model = teacher_model.cuda() if params.cuda else teacher_model
 
         utils.load_checkpoint(teacher_checkpoint, teacher_model)
@@ -384,6 +385,14 @@ if __name__ == '__main__':
     else:
         if params.model_version == "resnet18":
             model = resnet.ResNet18().cuda() if params.cuda else resnet.ResNet18()
+            optimizer = optim.SGD(model.parameters(), lr=params.learning_rate,
+                                momentum=0.9, weight_decay=5e-4)
+            # fetch loss function and metrics
+            loss_fn = resnet.loss_fn
+            metrics = resnet.metrics
+
+        elif params.model_version == "resnet50":
+            model = resnet.ResNet50().cuda() if params.cuda else resnet.ResNet50()
             optimizer = optim.SGD(model.parameters(), lr=params.learning_rate,
                                 momentum=0.9, weight_decay=5e-4)
             # fetch loss function and metrics
