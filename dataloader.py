@@ -57,15 +57,15 @@ def get_train_valid_loader(data_dir,
 
     # define transforms
     valid_transform = transforms.Compose([
-            transforms.CenterCrop((224,224)),
+            transforms.Resize((224,224)),
             transforms.ToTensor(),
             normalize,
     ])
     if augment:
         train_transform = transforms.Compose([
-            transforms.RandomHorizontalFlip(),
-            # transforms.Resize((224,224)),
+            #transforms.Resize((224,224)),
             transforms.RandomCrop((224,224), pad_if_needed=True, padding_mode='reflect'),
+            transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             normalize,
         ])
@@ -154,7 +154,7 @@ def get_test_loader(data_dir,
 
     # define transform
     transform = transforms.Compose([
-        transforms.CenterCrop((224,224)),
+        transforms.Resize((224,224)),
         transforms.ToTensor(),
         normalize,
     ])

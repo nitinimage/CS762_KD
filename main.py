@@ -117,7 +117,7 @@ def train_and_evaluate(model, train_dataloader, val_dataloader, optimizer,
     for epoch in range(params.num_epochs):
      
         # Run one epoch
-        logging.info("Epoch {}/{}".format(epoch + 1, params.num_epochs))
+        logging.info("\nEpoch {}/{}".format(epoch + 1, params.num_epochs))
 
         # compute number of batches in one epoch (one full pass over the training set)
         train(model, optimizer, loss_fn, train_dataloader, metrics, params, scheduler)
@@ -250,7 +250,7 @@ def train_and_evaluate_kd(model, teacher_model, train_dataloader, val_dataloader
         scheduler.step()
 
         # Run one epoch
-        logging.info("Epoch {}/{}".format(epoch + 1, params.num_epochs))
+        logging.info("\nEpoch {}/{}".format(epoch + 1, params.num_epochs))
 
         # compute number of batches in one epoch (one full pass over the training set)
         train_kd(model, teacher_model, optimizer, loss_fn_kd, train_dataloader,
