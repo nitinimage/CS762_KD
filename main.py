@@ -86,10 +86,11 @@ def train(model, optimizer, loss_fn, dataloader, metrics, params, scheduler):
 
             t.set_postfix(loss='{:05.3f}'.format(loss_avg()))
             t.update()
-
+    
+    for i in summ:
+        print(i)
+        
     # compute mean of all metrics in summary
-
-    summ.cpu()
     metrics_mean = {metric:np.mean([x[metric] for x in summ]) for metric in summ[0]}
     metrics_string = " ; ".join("{}: {:05.3f}".format(k, v) for k, v in metrics_mean.items())
     logging.info("- Train metrics: " + metrics_string)

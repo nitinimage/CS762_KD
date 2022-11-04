@@ -3,6 +3,7 @@ Create train, valid, test iterators.
 """
 
 import torch
+import torchvision
 import numpy as np
 from torchvision import datasets
 from torchvision import transforms
@@ -17,7 +18,7 @@ def get_train_valid_loader(data_dir,
                            batch_size,
                            augment,
                            random_seed,
-                           valid_size=0.2,
+                           valid_size=0.9,
                            shuffle=True,
                            show_sample=False,
                            num_workers=1,
