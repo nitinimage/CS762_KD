@@ -92,8 +92,7 @@ def set_logger(log_path):
     """
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
-    print(logger.handlers)
-    if not logger.handlers:
+    if logger.handlers:
         # Logging to a file
         file_handler = logging.FileHandler(log_path)
         file_handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s: %(message)s'))
